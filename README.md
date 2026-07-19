@@ -39,3 +39,57 @@ Below there is a table of the PINOUT
 | **7** | PAUSE | **START** button | Triggers the console's Pause/Start function |
 | **8** | GND | Ground / Common | Common return for all buttons |
 | **9** | Button 2 / TR | **C** button | Second action button |
+
+## Setup
+
+This project uses PlatformIo as tool for building and communicating with the device.
+Check [platformio.ini](platformio.ini) file for the device configuration used in
+this project.
+
+### Install
+
+Install platformio core if you do not have it by following the instructions
+on [Installation guide](https://docs.platformio.org/en/latest/core/installation/index.html)
+
+#### Arch Linux
+
+For Arch Linux users, you can install with:
+
+```sh
+sudo pacman -S platformio-core platformio-core-udev
+```
+
+Then reload the udev rules:
+
+```sh
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+```
+
+### Build
+
+If you are using clangd or another LSP, generate the compilation database by running:
+
+```sh
+pio run -t compiledb
+```
+
+This creates the [compile_commands.json](compile_commands.json) file used by the
+language server.
+
+### Upload
+
+Uploading the code to the board is simple, you just need to figure out
+which is your board's serial port, then upload to it.
+
+To see the available ports, run:
+
+```sh
+pio device list
+```
+
+Then upload using:
+
+```sh
+pio run -t upload --upload-port <device-port>
+```
