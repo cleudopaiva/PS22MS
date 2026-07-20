@@ -1,3 +1,4 @@
+#include "dualshock_2_interpreter.h"
 #include <SPI.h>
 
 const int SS_PIN = SS;
@@ -20,7 +21,7 @@ void loop() {
   for (int i = 0; i < 5; i++) {
     byte dataByte = SPI.transfer(defaultCommand[i]);
     Serial.print(dataByte, HEX);
-    Serial.print("");                          
+    Serial.print("");
     data[i] = dataByte;
   }
 
@@ -30,4 +31,3 @@ void loop() {
 
   delay(50);
 }
-                                                                            
