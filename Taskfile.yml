@@ -1,6 +1,9 @@
 version: '3'
 
 tasks:
+  init:
+    
+
   run:
     desc: Upload firmware code and run the dualsense interpreter
     deps:
@@ -42,11 +45,9 @@ tasks:
     dir: dualsense_interpreter
     cmds:
       - |
-        if [ ! -f dualsense_interpreter/build/CMakeCache.txt ]; then
-          cmake -B build
-        fi
-
+        cmake -B build
         cmake --build build
+
 
   dualsense_interpreter:run:
     desc: Run the dualsense interpreter
