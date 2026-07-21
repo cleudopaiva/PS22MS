@@ -1,0 +1,68 @@
+version: '3'
+
+tasks:
+  run:
+    desc: Upload firmware code and run the dualsense interpreter
+    deps:
+      - ms_communicator:upload
+      - dualsense_interpreter:run
+
+  build:
+    desc: Compile all projects
+    deps:
+      - ms_communicator:compiledb
+      - dualsense_interpreter:build
+
+  ms_communicator:build:
+    desc: Compile ms_communicator firmware
+    dir: ms_communicator
+    cmds:
+      - "pio run"
+
+  ms_communicator:compiledb:
+    desc: Generate the compile_commands.json for ms_communicator
+    dir: ms_communicator
+    cmds:
+      - "pio run -t compiledb"
+
+  ms_communicator:upload:
+    desc: Upload ms communicator firmware to the board
+    dir: ms_communicator
+    cmds:
+      - "pio run -t upload"
+
+  ms_communicator:clean:
+    desc: Clean build from ms_communicator
+    dir: ms_communicator
+    cmds: 
+      - "pio run -t clean"
+
+  dualsense_interpreter:build:
+    desc: Compile dualsense_interpreter 
+    dir: dualsense_interpreter
+    cmds:
+      - |
+        if [ ! -f dualsense_interpreter/build/CMakeCache.txt ]; then
+          cmake -B build
+        fi
+
+        cmake --build build
+
+  dualsense_interpreter:run:
+    desc: Run the dualsense interpreter
+    dir: dualsense_interpreter
+    cmds:
+      - "./build/dualsense_interpreter"
+
+  dualsense_interpreter:clean:
+    desc: Clean build from dualsense_interpreter 
+    dir: dualsense_interpreter
+    cmds: 
+      - "rm -rf build"
+
+  clean:
+    desc: Clean build from all projects
+    deps: 
+      - ms_communicator:clean
+      - dualsense_interpreter:clean
+

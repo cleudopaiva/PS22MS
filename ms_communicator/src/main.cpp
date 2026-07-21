@@ -1,6 +1,5 @@
+#include "ms_communicator.h"
 #include <Arduino.h>
-#include <dualshock_2_interpreter.h>
-#include <ms_communicator.h>
 
 void setup() {
   setup_ms_pins();
