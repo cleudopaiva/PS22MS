@@ -4,22 +4,25 @@ project(dualsense_interpreter LANGUAGES CXX)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(
-  HIDAPI 
-  REQUIRED
-  IMPORTED_TARGET
-  hidapi-hidraw
-)
+find_package(hidapi CONFIG REQUIRED)
 
 add_executable(
   dualsense_interpreter
   src/main.cpp
 )
 
+
 target_link_libraries(
   dualsense_interpreter
   PRIVATE
-    PkgConfig::HIDAPI
+      hidapi::hidapi
+)
+
+set_target_properties(
+  dualsense_interpreter
+  PROPERTIES
+  CXX_STANDARD 20
+  CXX_STANDARD_REQUIRED ON
+  CXX_EXTENSIONS OFF
 )
 
