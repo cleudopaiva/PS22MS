@@ -42,6 +42,8 @@ void decode_hat(std::uint8_t value, dualsense_state &state) {
     state.left = true;
     state.up = true;
     break;
+  case 8:
+    break;
   }
 }
 

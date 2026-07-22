@@ -25,7 +25,8 @@ int serial_configure(int fd, speed_t baud_rate) {
 
   cfmakeraw(&tty);
 
-  if (cfsetispeed(&tty, baud_rate) == -1 || cfsetospeed(&tty, baud_rate) - 1) {
+  if (cfsetispeed(&tty, baud_rate) == -1 ||
+      cfsetospeed(&tty, baud_rate) == -1) {
     std::cerr << "configure_serial_port_error: Failed to set baud_rate\n";
     return 1;
   }
@@ -75,6 +76,7 @@ int serial_write_data(int fd, const std::uint8_t *data, std::size_t size) {
 
   return 0;
 }
+
 int serial_write_byte(int fd, const std::uint8_t byte) {
   while (true) {
     const ssize_t bytes_written = ::write(fd, &byte, sizeof(byte));

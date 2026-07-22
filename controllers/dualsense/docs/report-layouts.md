@@ -32,10 +32,10 @@ are allocated.
 |     3 | Right Stick Y          | `0-255`                                           |
 |     4 | L2 Trigger             | Analog                                            |
 |     5 | R2 Trigger             | Analog                                            |
-|     6 | Buttons 1              | D-Pad + face buttons                              |
-|     7 | Buttons 2              | Shoulder buttons + Create/Options + stick buttons |
-|     8 | Buttons 3              | PS, Touchpad Click, Mute                          |
-|     9 | Counter                | Packet counter                                    |
+|     6 | Counter                | Packet counter                                    |
+|     7 | Buttons 1              | D-Pad + face buttons                              |
+|     8 | Buttons 2              | Shoulder buttons + Create/Options + stick buttons |
+|     9 | Buttons 3              | PS, Touchpad Click, Mute                          |
 | 10-11 | Gyroscope X            | Little-endian `int16`                             |
 | 12-13 | Gyroscope Y            | Little-endian `int16`                             |
 | 14-15 | Gyroscope Z            | Little-endian `int16`                             |

@@ -6,7 +6,4 @@ void setup() {
   Serial.begin(115200);
 }
 
-void loop() {
-  handle_serial_commands();
-  delay(100);
-}
+void loop() { handle_serial_commands(); }

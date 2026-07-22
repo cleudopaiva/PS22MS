@@ -13,24 +13,35 @@ add_executable(
   interpreter/interpreter.cpp
 )
 
+add_library(
+  serial
+  ../../common/serial/serial.cpp
+)
+
+target_include_directories(
+  serial
+  PUBLIC
+    ../../common/serial
+)
+
 target_include_directories(
   dualsense_interpreter
   PRIVATE
     interpreter
     adapter
     ../../common/master_system_command/
-    ../../common/serial/
 )
-
 
 target_link_libraries(
   dualsense_interpreter
   PRIVATE
       hidapi::hidapi
+      serial
 )
 
 set_target_properties(
   dualsense_interpreter
+  serial
   PROPERTIES
   CXX_STANDARD 20
   CXX_STANDARD_REQUIRED ON
