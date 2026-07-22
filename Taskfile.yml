@@ -1,9 +1,6 @@
 version: '3'
 
 tasks:
-  init:
-    
-
   run:
     desc: Upload firmware code and run the dualsense interpreter
     deps:
