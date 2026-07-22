@@ -39,22 +39,21 @@ tasks:
 
   dualsense_interpreter:build:
     desc: Compile dualsense_interpreter 
-    dir: dualsense_interpreter
+    dir: controllers/dualsense
     cmds:
       - |
         cmake -B build
         cmake --build build
 
-
   dualsense_interpreter:run:
     desc: Run the dualsense interpreter
-    dir: dualsense_interpreter
+    dir: controllers/dualsense
     cmds:
       - "./build/dualsense_interpreter"
 
   dualsense_interpreter:clean:
     desc: Clean build from dualsense_interpreter 
-    dir: dualsense_interpreter
+    dir: controllers/dualsense
     cmds: 
       - "rm -rf build"
 
