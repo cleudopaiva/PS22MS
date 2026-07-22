@@ -1,18 +1,4 @@
-# Dualsense Interpreter
-
-This project aims to interpret dualsense HID reports, converting
-them into known states.
-
-There are 3 possible uses of a DualSense controller, each mode sends
-a different amount of data in the HID reports.
-
-| Mode            | Report ID | Size         | Contains                                                       |
-| --------------- | --------- | ------------ | -------------------------------------------------------------- |
-| Basic Bluetooth | `0x01`    | **10 bytes** | Sticks, triggers, buttons                                      |
-| USB             | `0x01`    | **64 bytes** | Full controller state, IMU, touchpad, battery, timestamps      |
-| Full Bluetooth  | `0x31`    | **78 bytes** | Same information as USB plus Bluetooth-specific header and CRC |
-
-## Report Layouts
+# Report Layouts
 
 These tables are useful to identify the report layouts and how the bytes
 are allocated.
@@ -21,7 +7,7 @@ are allocated.
 > The first byte is always the Report ID, so consider the Byte 0 in the tables
 > as the second byte.
 
-### Basic Bluetooth (0x01)
+## Basic Bluetooth (0x01)
 
 | Byte | Name          | Description                             |
 | ---: | ------------- | --------------------------------------- |
@@ -36,7 +22,7 @@ are allocated.
 |    8 | Buttons 3     | PS, Touchpad Click, Mute                |
 |    9 | Counter       | Sequence number / packet counter        |
 
-### USB (0x01)
+## USB (0x01)
 
 |  Byte | Name                   | Description                                       |
 | ----: | ---------------------- | ------------------------------------------------- |
@@ -64,7 +50,7 @@ are allocated.
 | 36-39 | Touch 2                | Touch state and coordinates                       |
 | 40-63 | Reserved               | Currently undocumented or vendor-specific         |
 
-### Full Bluetooth (0x31)
+## Full Bluetooth (0x31)
 
 Unlike USB mode, Bluetooth reports prepend a small header and append a CRC32.
 
@@ -77,7 +63,7 @@ Unlike USB mode, Bluetooth reports prepend a small header and append a CRC32.
 | 67-73 | Reserved        | Bluetooth-specific fields              |
 | 74-77 | CRC32           | Packet checksum                        |
 
-### Shared Button bytes
+## Shared Button bytes
 
 Byte 6:
 

@@ -6,42 +6,9 @@
 #include <iostream>
 #include <optional>
 
-constexpr unsigned short SONY_VID = 0x054C;
-constexpr unsigned short DUALSENSE_PID = 0x0CE6;
-constexpr unsigned long long HID_READ_TIMEOUT_IN_MS = 100;
+#include "interpreter.h"
 
-struct dualsense_state {
-  bool up{};
-  bool down{};
-  bool left{};
-  bool right{};
-
-  bool square{};
-  bool cross{};
-  bool circle{};
-  bool triangle{};
-
-  bool l1{};
-  bool r1{};
-  bool l2{};
-  bool r2{};
-
-  bool create{};
-  bool options{};
-  bool l3{};
-  bool r3{};
-
-  bool ps{};
-  bool touchpad{};
-  bool microphone{};
-
-  std::uint8_t left_x{};
-  std::uint8_t left_y{};
-  std::uint8_t right_x{};
-  std::uint8_t right_y{};
-  std::uint8_t l2_analog{};
-  std::uint8_t r2_analog{};
-};
+hid_device *controller = nullptr;
 
 void decode_hat(std::uint8_t value, dualsense_state &state) {
   const std::uint8_t hat = value & 0x0F;
@@ -125,8 +92,8 @@ std::optional<dualsense_state> parse_usb_report(const std::uint8_t *report,
   return state;
 }
 
-int main() {
-  hid_device *controller = hid_open(SONY_VID, DUALSENSE_PID, nullptr);
+int interpret_init() {
+  controller = hid_open(SONY_VID, DUALSENSE_PID, nullptr);
 
   if (controller == nullptr) {
     int err = errno;
@@ -143,37 +110,53 @@ int main() {
     return 1;
   }
 
-  std::array<unsigned char, 128> report{};
+  return 0;
+}
 
-  int exit_code = 0;
-
-  while (true) {
-    const int bytes_read =
-        hid_read_timeout(controller, report.data(), report.size(), 100);
-
-    if (bytes_read < 0) {
-      const wchar_t *hid_err = hid_read_error(controller);
-
-      if (hid_err) {
-        std::wcerr << L"hid_read_error:" << hid_err << L'\n';
-      }
-
-      exit_code = 1;
-      break;
-    }
-
-    // The value is 0 if no data was present within the timeout
-    if (bytes_read == 0) {
-      continue;
-    }
-
-    std::printf("Report 0x%02X size %d: ", report[0], bytes_read);
-
-    parse_usb_report(report.data(), bytes_read);
+std::optional<dualsense_state> interpret_next() {
+  if (controller == nullptr) {
+    std::cerr
+        << "interpret_error: interpret_next was called before interpret_init";
+    return std::nullopt;
   }
 
-  hid_close(controller);
-  hid_exit();
+  std::array<unsigned char, 128> report{};
 
-  return 0;
+  const int bytes_read =
+      hid_read_timeout(controller, report.data(), report.size(), 100);
+
+  if (bytes_read < 0) {
+    const wchar_t *hid_err = hid_read_error(controller);
+
+    if (hid_err) {
+      std::wcerr << L"hid_read_error:" << hid_err << L'\n';
+    }
+
+    return std::nullopt;
+  }
+
+  // The value is 0 if no data was present within the timeout
+  if (bytes_read == 0) {
+    return std::nullopt;
+  }
+
+  std::printf("Report 0x%02X size %d \n", report[0], bytes_read);
+
+  auto state = parse_usb_report(report.data(), bytes_read);
+
+  if (!state.has_value()) {
+    std::cerr << "hid_report_error: the report was in an unkown format \n";
+    return std::nullopt;
+  }
+
+  return state;
+}
+
+void interpret_close() {
+  if (controller != nullptr) {
+    hid_close(controller);
+    controller = nullptr;
+  }
+
+  hid_exit();
 }

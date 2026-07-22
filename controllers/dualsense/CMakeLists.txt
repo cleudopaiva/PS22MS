@@ -9,6 +9,16 @@ find_package(hidapi CONFIG REQUIRED)
 add_executable(
   dualsense_interpreter
   src/main.cpp
+  adapter/adapter.cpp
+  interpreter/interpreter.cpp
+)
+
+target_include_directories(
+  dualsense_interpreter
+  PRIVATE
+    interpreter
+    adapter
+    ../../common
 )
 
 
