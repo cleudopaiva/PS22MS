@@ -18,7 +18,8 @@ target_include_directories(
   PRIVATE
     interpreter
     adapter
-    ../../common
+    ../../common/master_system_command/
+    ../../common/serial/
 )
 
 
