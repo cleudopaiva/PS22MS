@@ -1,3 +1,4 @@
+#pragma once
 
 #include "interpreter.h"
 #include "ms_command.h"
