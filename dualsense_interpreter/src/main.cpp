@@ -46,10 +46,36 @@ struct dualsense_state {
 void decode_hat(std::uint8_t value, dualsense_state &state) {
   const std::uint8_t hat = value & 0x0F;
 
-  state.up = hat == 0 | hat == 1 || hat == 7;
-  state.right = hat == 1 || hat == 2 || hat == 3;
-  state.down = hat == 3 || hat == 4 || hat == 5;
-  state.left = hat == 5 || hat == 6 || hat == 7;
+  switch (hat) {
+  case 0:
+    state.up = true;
+    break;
+  case 1:
+    state.up = true;
+    state.right = true;
+    break;
+  case 2:
+    state.right = true;
+    break;
+  case 3:
+    state.right = true;
+    state.down = true;
+    break;
+  case 4:
+    state.down = true;
+    break;
+  case 5:
+    state.down = true;
+    state.left = true;
+    break;
+  case 6:
+    state.left = true;
+    break;
+  case 7:
+    state.left = true;
+    state.up = true;
+    break;
+  }
 }
 
 std::optional<dualsense_state> parse_usb_report(const std::uint8_t *report,
@@ -78,7 +104,25 @@ std::optional<dualsense_state> parse_usb_report(const std::uint8_t *report,
 
   decode_hat(buttons0, state);
 
-  state.square = (buttons0 & 0x10) != 0;
+  state.square = buttons0 & (1u << 4);
+  state.cross = buttons0 & (1u << 5);
+  state.circle = buttons0 & (1u << 6);
+  state.triangle = buttons0 & (1u << 7);
+
+  state.l1 = buttons1 & 1u;
+  state.r1 = buttons1 & (1u << 1);
+  state.l2 = buttons1 & (1u << 2);
+  state.r2 = buttons1 & (1u << 3);
+  state.create = buttons1 & (1u << 4);
+  state.options = buttons1 & (1u << 5);
+  state.l3 = buttons1 & (1u << 6);
+  state.r3 = buttons1 & (1u << 7);
+
+  state.ps = buttons2 & 1u;
+  state.touchpad = buttons2 & (1u << 1);
+  state.microphone = buttons2 & (1u << 2);
+
+  return state;
 }
 
 int main() {
@@ -118,17 +162,14 @@ int main() {
       break;
     }
 
+    // The value is 0 if no data was present within the timeout
     if (bytes_read == 0) {
       continue;
     }
 
     std::printf("Report 0x%02X size %d: ", report[0], bytes_read);
 
-    for (int i = 0; i < bytes_read; i++) {
-      std::printf("%02X", report[i]);
-    }
-
-    std::printf("\n");
+    parse_usb_report(report.data(), bytes_read);
   }
 
   hid_close(controller);
