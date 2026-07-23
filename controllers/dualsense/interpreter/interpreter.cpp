@@ -47,13 +47,30 @@ void decode_hat(std::uint8_t value, dualsense_state &state) {
   }
 }
 
-std::optional<dualsense_state> parse_usb_report(const std::uint8_t *report,
-                                                std::size_t size) {
-  if (report == nullptr || size < 64) {
+std::optional<dualsense_state>
+parse_dualsense_report(const std::uint8_t *report, std::size_t size) {
+
+  if (report == nullptr) {
     return std::nullopt;
   }
 
-  if (report[0] != 0x01) {
+  int payload_offest;
+
+  switch (report[0]) {
+  case 0x01:
+    if (size != 10 && size != 64) {
+      return std::nullopt;
+    }
+
+    payload_offest = 1;
+    break;
+  case 0x32:
+    if (size != 78) {
+      return std::nullopt;
+    }
+    payload_offest = 2;
+  default:
+
     return std::nullopt;
   }
 
@@ -144,7 +161,7 @@ std::optional<dualsense_state> interpret_next() {
 
   std::printf("Report 0x%02X size %d \n", report[0], bytes_read);
 
-  auto state = parse_usb_report(report.data(), bytes_read);
+  auto state = parse_dualsense_report(report.data(), bytes_read);
 
   if (!state.has_value()) {
     std::cerr << "hid_report_error: the report was in an unkown format \n";
