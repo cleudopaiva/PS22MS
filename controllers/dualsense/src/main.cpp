@@ -29,14 +29,16 @@ int main() {
     return ret;
   }
 
-  while (true) {
-    auto state = interpret_next();
+  dualsense_state state{};
 
-    if (!state.has_value()) {
+  while (true) {
+    ret = interpret_next_report(state);
+
+    if (ret == 0) {
       continue;
     }
 
-    auto command = adapt_dualsense_state_to_ms_command(state.value());
+    auto command = adapt_dualsense_state_to_ms_command(state);
 
     ret = serial_write_byte(fd, command);
 
@@ -44,8 +46,6 @@ int main() {
       std::cerr << "Error on serial_write_byte";
       return ret;
     }
-
-    std::cout << "0x" << std::hex << +command << "\n";
   }
 
   interpret_close();
